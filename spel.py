@@ -11,6 +11,7 @@ print("\n\n")
 print("Datorn slog: " + str(comp_die)) 
 print("Du slog    : " + str(user_die))
 print("----------------------------------------")
+print("\n\n")
 if comp_die > user_die:
     print('Datorn vann!')
 elif comp_die < user_die: 
