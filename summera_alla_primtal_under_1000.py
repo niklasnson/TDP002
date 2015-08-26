@@ -2,15 +2,16 @@
 
 # Summan av alla primtal under 100 är 1060. Er uppgift är att ta reda på summan för samtliga primtal under 1000.
 
-n = 100
-primals = []
-# skapa en lista med alla tal
-for a in range(2, 101):
-    primals.append(a)
-# radera alla jämna tal
-for a in primals:
-    if a % 2 == 0 and a < 3:
-        primals.pop(a)
+lower = 0
+upper = 1000
+primes = []
 
+for num in range(lower,upper + 1):
+    if num > 1:                              # ett primtal är sörre än 1
+        for i in range(2,num):               # för alla i med start 2 till num
+           if (num % i) == 0:                # om num är delbart
+               break                         # inte ett primtal
+        else:
+           primes.append(num)                # lägg till som primtal
 
-print(primals)
+print("Summan av primtalen mellan {} och {} är {}".format(lower, upper, sum(primes)))

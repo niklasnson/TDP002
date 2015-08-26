@@ -6,14 +6,14 @@
 
 # defintioner
 is_done     = False
-svar        = 0
+answer      = 0
 
 
 # main - brutalforce
 while is_done == False:
-    svar = svar + 1                         # addera 1 till svar
+    answer = answer + 1                     # addera 1 till svar
     is_done = True                          # vi är klara om inte:
     for number in range(1, 13):             # för alla tal mellan 1-13
-        if svar % number != 0:              # om det finns en rest
+        if answer % number != 0:            # om det finns en rest
             is_done = False                 # så är vi inte klara
-print(svar)                                 # skriv ut svar
+print(answer)                               # skriv ut svar
