@@ -3,9 +3,9 @@
 
 summa   = 0
 lower   = 0
-upper   = 512 # input("max tal?: ")
+upper   = 512
 
-while lower < upper:
-    summa = summa + lower
-    lower = lower + 1
-print(summa)
+for i in range(lower, upper + 1):       # för alla tal i in range (upper + 1)
+    summa = summa + i                   # summa är lika med summa plus 1
+
+print(summa)                            # skriv ut summa!
