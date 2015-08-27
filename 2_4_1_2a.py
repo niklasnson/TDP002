@@ -1,3 +1,4 @@
-import libs/artylib
-#artylib.frame(input("ange en text: "))
-artylib.triangle(input("ange höjd: "))
+import libs.asciiart
+#libs.asciiart.frame(input("ange en text: "))
+#libs.asciiart.triangle(input("ange höjd: "))
+libs.asciiart.flag(2)

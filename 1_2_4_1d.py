@@ -2,10 +2,12 @@
 
 # Summan av alla primtal under 100 är 1060. Er uppgift är att ta reda på summan för samtliga primtal under 1000.
 
+# defintioner
 lower = 0
 upper = 1000
 primes = []
 
+# main
 for num in range(lower,upper + 1):
     if num > 1:                              # ett primtal är sörre än 1
         for i in range(2,num):               # för alla i med start 2 till num

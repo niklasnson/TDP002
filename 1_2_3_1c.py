@@ -7,13 +7,14 @@
 # defintioner
 is_done     = False
 answer      = 0
-
+try_num     = 13
 
 # main - brutalforce
 while is_done == False:
     answer = answer + 1                     # addera 1 till svar
     is_done = True                          # vi är klara om inte:
-    for number in range(1, 13):             # för alla tal mellan 1-13
+    for number in range(1, try_num):             # för alla tal mellan 1-13
         if answer % number != 0:            # om det finns en rest
-            is_done = False                 # så är vi inte klara
+            is_done = False
+            break                           # så är vi inte klara
 print(answer)                               # skriv ut svar
