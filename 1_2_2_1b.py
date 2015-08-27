@@ -4,7 +4,7 @@
 
 # defintioner
 lower   = 1
-upper   = 512
+upper   = 12
 summa   = 1
 
 # main

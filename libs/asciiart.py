@@ -1,9 +1,9 @@
 # Skriv en funktion frame som accepterar en textsträng som indata och skriver ut textsträngen inramad med asterisker.
 def frame(text):
-    text = "* " + text + " *"
-    print("*"*len(text))
-    print(text)
-    print("*"*len(text))
+    text = "* " + text + " *"           # detta är texten med *
+    print("*"*len(text))                # övre del som är lika lång som texten
+    print(text)                         # texten
+    print("*"*len(text))                # undedelen som är lika lång som texten
 
 # Skriv en funktion triangle som accepterar ett heltal som indata och skriver ut en triangel av asterisker med den höjd som heltalet anger.
 def triangle(num):

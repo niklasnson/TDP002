@@ -10,7 +10,7 @@ answer      = 0
 try_num     = 13
 
 # main - brutalforce
-while is_done == False:
+while not is_done:
     answer = answer + 1                     # addera 1 till svar
     is_done = True                          # vi är klara om inte:
     for number in range(1, try_num):             # för alla tal mellan 1-13
