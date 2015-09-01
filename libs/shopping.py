@@ -24,12 +24,19 @@ def shopping_remove(slist):
   """
   Radera artiklar ur shoppinglistan 
   """
-  item = int(input("Vilken sak vill du ta bort ur listan? "))
-  slist.remove(item)
-
-def shopping_edit():
+  try:
+    item = int(input("Vilken sak vill du ta bort ur listan? "))
+    slist.pop(item -1)
+  except: 
+    print('Fel: måste vara ett numreriskt värde som finns i listan!')
+  
+def shopping_edit(slist):
   """
   Editera artiklar i shoppinglistan
   """
-  item = input("Vilken sak vill du ändra på ? ")
-  text = input("Vad vill du att det skall stå istället för '{}'? : ", "texten") 
+  try:
+    item = int(input("Vilken sak vill du ändra på ? "))
+    text = input("Vad vill du att det skall stå istället för '" + slist[item -1] + "'? ")
+    slist[item -1] = text
+  except:
+    print('Fel: måste vara ett numreriskt värde som finns med i listan!')
