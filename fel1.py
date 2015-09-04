@@ -20,11 +20,11 @@ print("   10 multiplicated with x:", ", ".join(numbers))
 # print 10 divided by the numbers 1 to 10
 numbers = []
 for x in range(1,10):                                           # fel nummer 3: annars börjar den på 0 och då får vi division med noll. 
-  numbers.append(str(fraction(x)))                              # fel nummer 4: skall inte vara en sträng. 
-print("   10 divided by x:", ", " .join(numbers))               # fel nummer 5: here i do some shit and its working! 
+  numbers.append(str(fraction(x)))                               
+print("   10 divided by x:", ", " .join(numbers))               # fel nummer 4: gjorde ett mellanslag innan. join gav en int, ger nu sträng.
 
 # print 10 raised to the power of the numbers 1 to 10
 numbers = []
 for x in range(10):
-    numbers.append(str(power(x)))
-print("   10 raised to x:", ", " .join(numbers))                # fel nummer 6: here i do some shit and its working! + gör om till string!
+    numbers.append(str(power(x)))                               # fel nummer 5: gjordes inte om till sträng. 
+print("   10 raised to x:", ", " .join(numbers))                # fel nummer 6: gjorde ett mellanslag innan. join gav en int. ger nu sträng.
