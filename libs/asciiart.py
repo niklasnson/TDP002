@@ -38,6 +38,9 @@ def print_square(num):
 
 
 def print_stars(num=1):
+  """
+  Skriver ut stjärnor.
+  """
   for i in range(num):
     print('*', end='')
   print()                                 # avsluta med ny rad
