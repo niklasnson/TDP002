@@ -50,13 +50,13 @@ def get_value_of_card(position, deck):
 
 def create_alphabet():
     temp = {}
-    for i in "ABCDEFGHIJKLMNOPQSTUVXYZ":
-        temp[str(i)] = int(len(temp) + 1)
-    return sorted(temp)         # eftersom vi vill ha listan från A=Z 
+    for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        temp[str(c)] = int(len(temp) + 1)
+    return temp
 
 def convert_char_to_number(char, alphabet_list=create_alphabet()):
     # skicka in en boktsav och du får tillbaka en siffra. 
-    return int(alphabet_list[char])
+    return alphabet_list.get(char)
 
 def convert_number_to_char(number, alphabet_list=create_alphabet()):
     # skicka in en siffra och du får tillbaka en bokstav. 
@@ -65,31 +65,31 @@ def convert_number_to_char(number, alphabet_list=create_alphabet()):
             return value
             break
 
-def solitare_keystream(length = 30, deck=create_deck()): 
-    jokers_is_at = find_jokers_in_deck(deck)
-    deck_a = split_deck(0, jokers_is_at[0], deck) # från 0 till första jokern
-    deck_b = split_deck(jokers_is_at[0], int(jokers_is_at[1] + 1), deck) # från första jokern till sista.
-    deck_c = split_deck(jokers_is_at[1] + 1, int(len(deck) - 1), deck) # från sista jokern till slutet
-    deck = deck_c + deck_b + deck_a # flytta runt delarna enligt mönster
-    value_of_last_card = get_value_of_card(int(len(deck)-1), deck) # hämta värdet på det sista kortet
-    deck_a = split_deck(0, value_of_last_card, deck) # från position 0 till värdet på det sista kortet i leken.
-    deck_b = split_deck(value_of_last_card, int(len(deck)-1), deck) #från positionen av det sista kortet till längden av leken. 
-    deck = deck_b + deck_a 
-    alphabet = create_alphabet()
-
-    return alphabet
+def solitare_keystream(length = 30, deck=create_deck()):   
+    for i in range(length):
+        shuffle_deck(deck)
+        cut_deck(deck)
+        jokers_is_at = find_jokers_in_deck(deck)
+        deck_a = split_deck(0, jokers_is_at[0], deck) # från 0 till första jokern
+        deck_b = split_deck(jokers_is_at[0], int(jokers_is_at[1] + 1), deck) # från första jokern till sista.
+        deck_c = split_deck(jokers_is_at[1] + 1, int(len(deck) - 1), deck) # från sista jokern till slutet
+        deck = deck_c + deck_b + deck_a # flytta runt delarna enligt mönster
+        value_of_last_card = get_value_of_card(int(len(deck)-1), deck) # hämta värdet på det sista kortet
+        deck_a = split_deck(0, value_of_last_card, deck) # från position 0 till värdet på det sista kortet i leken.
+        deck_b = split_deck(value_of_last_card, int(len(deck)-1), deck) #från positionen av det sista kortet till längden av leken. 
+        deck = deck_b + deck_a 
+        keystram_starts_at = get_value_of_card(0, deck)
+        print(keystram_starts_at)
 
 def solitare_encrypt(message, solitare_deck):
     message = message.upper()
-    #key_phrase = solitare_keystream(len(message), solitare_deck)
+    key_phrase = solitare_keystream(len(message), solitare_deck)
 
     message_in_numbers = []
-
-    for char in message:
-        #message_in_numbers.append(convert_char_to_number(char))
-        print(char)
+    for c in message:
+        message_in_numbers.append(convert_char_to_number(c))
         
-    return message_in_numbers
+    return key_phrase
 
 def solitare_decrypt():
     return false
@@ -97,8 +97,8 @@ def solitare_decrypt():
 def main():
     solitare_deck = create_deck()
     message = input("Text att kryptera: ")
-    print(solitare_encrypt(message, solitare_deck))
-    print(create_alphabet())
+    solitare_encrypt(message, solitare_deck)
+    #print(create_alphabet())
 
 if __name__ == '__main__':
     main()
