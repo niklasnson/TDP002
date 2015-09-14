@@ -16,9 +16,6 @@ def create_deck():
     insert_joker(joker_a, deck)
     insert_joker(joker_b, deck)
 
-    #shuffle_deck(deck)
-    #cut_deck(deck)
-    print(deck)
     return deck
 
 def insert_joker(name, deck): 
@@ -69,10 +66,9 @@ def convert_string_to_numbers(string):
     return temp
 
 def solitare_keystream(length = 30, deck=create_deck()):
-    temp_deck = deck 
+    temp_deck = deck.copy() 
     shuffle_deck(temp_deck)                 # skall köras innan vi kommer in i loopen >>>>
     cut_deck(temp_deck)                     # skall köras innan vi kommer in i loopen >>>>
-
     keychain = []
     while len(keychain) < length:
         jokers_is_at = find_jokers_in_deck(temp_deck)
@@ -85,9 +81,6 @@ def solitare_keystream(length = 30, deck=create_deck()):
         deck_b = split_deck(value_of_last_card, int(len(temp_deck)-1), temp_deck) #från positionen av det sista kortet till längden av leken. 
         temp_deck = deck_b + deck_a 
         
-        print(temp_deck)
-
-
         index_of_card = get_value_of_card(0, temp_deck)          # bestäm värdet på det första kortet
                                                                  # kan det vara en joker ?!
         if index_of_card <= 26:
@@ -110,8 +103,8 @@ def sum_of(list_1, list_2):
 
 def diff_of(list_1, list_2):
     temp = []
-    for i in range(len(list_1)): 
-        value = list_1[i] - list_2[i]
+    for i in range(len(list_1)):
+        value = list_2[i] - list_1[i]
         if value >= 0:
             temp.append(value)
         else:
@@ -119,9 +112,20 @@ def diff_of(list_1, list_2):
 
     return temp
 
-def solitare_encrypt(message, solitare_deck):
+def strip_illegal_chars(message):
+    temp = ""
+    for char in message: 
+        if convert_char_to_number(char) >= 1 and convert_char_to_number(char) <= 27:
+            temp += char
+        else: 
+            print("\nVarning: din text innehåller förbjudna tecken och kommer inte att krypteras: {}\n".format(char)) 
+            break          
+    return temp        
+
+def solitare_encrypt(message, solitare_deck = create_deck()):
     message = message.upper()
-    # TODO: här måste vi kolla om tecken är A-Z
+    message = strip_illegal_chars(message)
+
     key_in_numbers = solitare_keystream(len(message), solitare_deck)
     message_in_numbers = convert_string_to_numbers(message)
     crypt_in_numbers = sum_of(key_in_numbers, message_in_numbers)
@@ -132,32 +136,22 @@ def solitare_encrypt(message, solitare_deck):
 
     return "".join(crypt_in_letters)
 
-def solitare_decrypt(message, solitare_deck):
+def solitare_decrypt(message, solitare_deck = create_deck()):
     key_in_numbers = solitare_keystream(len(message), solitare_deck) # skapa en ny key
     message_in_numbers = convert_string_to_numbers(message)          # conv
-    print(key_in_numbers)
-    print(message_in_numbers)
-    
     crypt_in_numbers = diff_of(key_in_numbers, message_in_numbers)
     
     message = []
     for i in crypt_in_numbers:
-        print(str(i) + " => " + convert_number_to_char(i))
         message.append(convert_number_to_char(i))  
 
     return "".join(message) 
 
 def main():
-    #solitare_deck = create_deck()
-
-    test_data = ['LENNART', 'ASTA', 'BILEN', 'GURKA', 'SIRI']
+    test_data = ['LENNART', 'ASTA', 'BILEN', 'GURKA', 'SIRI', "PYTHON", "ALIAS", "GANDALF", "gurka", "CLOwn"]
     for i in test_data: 
-        solitare_keystream(len(i))
-        #print(" ") 
-        #print(solitare_keystream(len(i)))
-        #print(solitare_keystream(len(i)))
-        #secret_message = str(solitare_encrypt(i, solitare_deck)) 
-        #print(i + " => " + secret_message + " => " + str(solitare_decrypt(secret_message, solitare_deck)))
+        secret_message = str(solitare_encrypt(i)) 
+        print(i + " => " + secret_message + " => " + str(solitare_decrypt(secret_message)))
     
 if __name__ == '__main__':
     main()
