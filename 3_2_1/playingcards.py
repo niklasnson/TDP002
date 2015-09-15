@@ -148,7 +148,7 @@ def solitare_decrypt(message, solitare_deck = create_deck()):
     return "".join(message) 
 
 def main():
-    test_data = ['LENNART', 'ASTA', 'BILEN', 'GURKA', 'SIRI', "PYTHON", "ALIAS", "GANDALF", "gurka", "CLOwn"]
+    test_data = ['LENNART', 'ASTA', 'BILEN', 'GURKA', 'SIRI', "PYTHON", "ALIAS", "GANDALF", "gurka", "CLOwn@"]
     for i in test_data: 
         secret_message = str(solitare_encrypt(i)) 
         print(i + " => " + secret_message + " => " + str(solitare_decrypt(secret_message)))
