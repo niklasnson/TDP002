@@ -2,62 +2,91 @@
 moves_spent     = 0
 current_level   = 1
 
-soko_walls      = []    #X,Y kordinater
-soko_crates     = []    #X,Y kordinater
-soko_storage    = []    #X,Y kordinater
-soko_player     = []    #X,Y kordinater
+level_data      = []
 
 
 # game settings
-key_right   = "L"
-key_left    = "H" 
-key_up      = "K" 
-key_down    = "J"
-
+key_right   = "l"
+key_left    = "h" 
+key_up      = "k" 
+key_down    = "j"
 
 def input_player_move():
-    input("level:{level}/moves:{moves} move: [Left: {left}] [Up: {up}] [Down: {down}] [Right: {right}] : ".format(level=current_level,moves=moves_spent,left=key_left, down=key_down, up=key_up, right=key_right))
-
-
-# gå igenom filen och stoppa in kordinater för varje object i en lista. 
-# denna lista kan vi sedan använda för att veta om vi kan röra oss eller inte. 
+    key = input("level:{level} / moves:{moves}  [left: {left}] [up: {up}] [down: {down}] [right: {right}]  [q: quit]: ".format(level=current_level,moves=moves_spent,left=key_left, down=key_down, up=key_up, right=key_right))
+    return key.lower()
 
 def initialize_sokoban_level(level): 
-    level_data = sokoban_load(level)
-    print(level_data)
+    sokoban_load(level)
 
-def update_sokoban_data(soko_list, x, y):
-    False 
+def render_game_map():
+    """
+    render level map from level_data
+    """
+    map = ""
+    for position in level_data:
+        map += position[2]
+    return map
 
+def update_game_map(data):
+    """
+    updates level data.
+    """
+    level_data[data[0]] = [data[1], data[2], "@"]
 
+def player_position(player):
+    """
+    returns the user position. 
+    """
+    for pos, data in enumerate(level_data):
+        if data[2] == player:
+            position = [pos, data[0], int(data[1] + 1)]
+    return position
+
+def move_player(position): 
+    """
+    moves player to a new position
+    """
+    update_game_map(position)
+    moves_spent = moves_spent + 1
+
+def sokoban_move(key): 
+    """
+    moves user to a new
+    """
+    keys = [key_right, key_left, key_up, key_down]
+    if key in keys:
+        position = player_position("@")
+        move_player(position)
+    
 def sokoban_display():
     """
-    @ Lagerarbetare 
-    O Lådorna 
-    # Väggar 
-      Golvyta 
-    . Lagringsplats
-    * Låda som står på en lagringsplats
-    + Lagerarbetare som står på en lagringsplats
+    dsiplay the levelmap and wait for a input from user. 
     """
-    input_player_move()
+    while True:
+        print("\n") 
+        print(render_game_map()) 
+        key = input_player_move()
+        if key == "q":
+            False
+            break
+        else: 
+            try: 
+                sokoban_move(key)
+            except: 
+                False
 
 def sokoban_load(filename):
     """
-    Loads a game map and returns a string object.
+    loads a game map into level_data
     """
-    f = open(filename)
-    level = f.read()
-    return level
-
-def player_can_move(X,Y):
-    """
-    returns true or false if user can move to new position
-    """
-    False
-
-def crate_can_move():
-    False
+    with open(filename, encoding='utf-8') as level: 
+        y = 0 
+        for line in level:
+            x = 0
+            for char in line: 
+                level_data.append([x, y, char])
+                x = x + 1
+            y = y + 1 
 
 def main():
     initialize_sokoban_level('data_levels/level_1.sokoban')
