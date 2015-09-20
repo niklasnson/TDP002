@@ -1,79 +1,48 @@
+import os
+from operator import itemgetter
+#
+#
 # game parameters 
-moves_spent     = 0
-current_level   = 1
+#
+#
 
-level_data      = []
+level_complete = False 
+moves_done=0
+current_level = 0
+levels = []
+level_data = []
 
-
+#
+#
 # game settings
-key_right   = "l"
-key_left    = "h" 
-key_up      = "k" 
-key_down    = "j"
+#
+#
 
-def input_player_move():
-    key = input("level:{level} / moves:{moves}  [left: {left}] [up: {up}] [down: {down}] [right: {right}]  [q: quit]: ".format(level=current_level,moves=moves_spent,left=key_left, down=key_down, up=key_up, right=key_right))
-    return key.lower()
+key_right = 'l'
+key_left = 'h' 
+key_up = 'k' 
+key_down = 'j'
 
-def initialize_sokoban_level(level): 
-    sokoban_load(level)
+player='@'
+floor=' '
+crate='o'
+storage='.'
+player_on_storage='+'
+crate_on_storage='*'
 
-def render_game_map():
+#
+#
+# levels functions
+#
+#
+def sokoban_levels():
     """
-    render level map from level_data
+    loads all levels filenames into a list 
     """
-    map = ""
-    for position in level_data:
-        map += position[2]
-    return map
-
-def update_game_map(data):
-    """
-    updates level data.
-    """
-    level_data[data[0]] = [data[1], data[2], "@"]
-
-def player_position(player):
-    """
-    returns the user position. 
-    """
-    for pos, data in enumerate(level_data):
-        if data[2] == player:
-            position = [pos, data[0], int(data[1] + 1)]
-    return position
-
-def move_player(position): 
-    """
-    moves player to a new position
-    """
-    update_game_map(position)
-    moves_spent = moves_spent + 1
-
-def sokoban_move(key): 
-    """
-    moves user to a new
-    """
-    keys = [key_right, key_left, key_up, key_down]
-    if key in keys:
-        position = player_position("@")
-        move_player(position)
-    
-def sokoban_display():
-    """
-    dsiplay the levelmap and wait for a input from user. 
-    """
-    while True:
-        print("\n") 
-        print(render_game_map()) 
-        key = input_player_move()
-        if key == "q":
-            False
-            break
-        else: 
-            try: 
-                sokoban_move(key)
-            except: 
-                False
+    for (dir, _, files) in os.walk("data_levels"):   
+        for f in files:
+            path = os.path.join(dir, f)
+            levels.append(path)
 
 def sokoban_load(filename):
     """
@@ -83,14 +52,101 @@ def sokoban_load(filename):
         y = 0 
         for line in level:
             x = 0
-            for char in line: 
+            for char in line:
                 level_data.append([x, y, char])
                 x = x + 1
             y = y + 1 
+#
+#
+# render functions 
+#
+#
+
+def get_map():
+    """
+    render level map from level_data
+    """
+    map = "\n"
+
+    # loopa för varje y värde i level_data 
+    for data in sorted(level_data, key = lambda x : (x[1], x[0])): # sort by second arg in current item   #for data in sorted(level_data, key=get_key):
+        map += data[2]    
+    return map
+
+#
+#
+#  movement functions
+#
+#
+def input_move():
+    """
+    input player move or quit command
+    """
+    str_help = 'level:{level} / moves:{moves}  [left: {left}] [up: {up}] [down: {down}] [right: {right}]  [q: quit]: '
+    key = input(str_help.format(level=current_level,moves=moves_done,left=key_left, down=key_down, up=key_up, right=key_right))
+    return key.lower()
+
+def can_move(dx, dy):
+    if get_obj(dx, dy) == " ":
+        return True
+    else: 
+        return False
+
+def move_player(dx, dy): 
+    """
+    moves player to a new position
+    """
+    x, y = find_player()
+    
+    level_data[get_pos(x, y)] = [x, y, " "]
+    level_data[get_pos(dx, dy)] = [dx, dy, "@"]
+
+def find_player():
+    """
+    returns the x, y position of player
+    """
+    for pos, data in enumerate(level_data):
+        if data[2] == player:
+            return data[0], data[1]
+
+def get_pos(x, y): 
+    for pos, data in enumerate(level_data): 
+        if data[0] == x and data[1] == y: 
+            return pos
+        
+
+def get_obj(x, y): 
+    for pos, data in enumerate(level_data): 
+        if data[0] == x and data[1] == y:
+            return data[2]
+#
+#
+# main and main loop functions 
+#
+#
+def sokoban_display():
+    """
+    dsiplay the levelmap and wait for a input from user, this is the main game loop 
+    """
+    while level_complete == False:
+        print(get_map())
+        key = input_move()
+        x, y = find_player()
+        if key == 'q':
+            False
+            break
+        if key == key_up and can_move(x, y - 1):
+            move_player(x, y - 1) 
+        if key == key_down and can_move(x, y + 1):
+            move_player(x, y + 1)   
+        if key == key_left and can_move(x - 1, y): 
+            move_player(x - 1, y)   
+        if key == key_right and can_move(x + 1 , y): 
+            move_player(x + 1, y)  
 
 def main():
-    initialize_sokoban_level('data_levels/level_1.sokoban')
-    sokoban_display()
-
+    sokoban_levels()                        # loads leveles into list
+    sokoban_load(levels[current_level])     # loads current level into level_data
+    sokoban_display()                       # go into main game loop
 if __name__ == '__main__':
     main()
