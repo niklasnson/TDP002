@@ -1,13 +1,14 @@
 import os
 from operator import itemgetter
+import sys
+
 #
 #
 # game parameters 
 #
 #
-
 level_complete = False 
-moves_done=0
+moves_spent = 0
 current_level = 0
 levels = []
 level_data = []
@@ -17,18 +18,40 @@ level_data = []
 # game settings
 #
 #
-
 key_right = 'l'
 key_left = 'h' 
 key_up = 'k' 
 key_down = 'j'
 
-player='@'
+player_normal='@'
 floor=' '
 crate='o'
 storage='.'
 player_on_storage='+'
 crate_on_storage='*'
+
+player='@'
+
+cli_help = """
+    
+    @ is you 
+    + is you standing on storage 
+    # is a wall 
+    . is empty storage 
+    o is a crate 
+    * is a create on storage 
+
+    to move:        k
+                h       l
+                    j
+
+    to quit: q 
+    to show this message: ? 
+
+    you can input multiple commands like: lllllkkjjh
+
+"""
+
 
 #
 #
@@ -61,7 +84,6 @@ def sokoban_load(filename):
 # render functions 
 #
 #
-
 def get_map():
     """
     render level map from level_data
@@ -78,35 +100,43 @@ def get_map():
 #  movement functions
 #
 #
-def input_move():
+def cmd():
     """
     input player move or quit command
     """
-    str_help = 'level:{level} / moves:{moves}  [left: {left}] [up: {up}] [down: {down}] [right: {right}]  [q: quit]: '
-    key = input(str_help.format(level=current_level,moves=moves_done,left=key_left, down=key_down, up=key_up, right=key_right))
-    return key.lower()
+
+    str_help = 'level:{level} / moves:{moves} $: '
+    keys = input(str_help.format(level=current_level + 1,moves=moves_spent))
+    keys = list(keys.lower())
+    return keys
 
 def can_move(dx, dy):
-    if get_obj(dx, dy) == " ":
+    if get_obj(dx, dy) != "#":
         return True
     else: 
         return False
 
-def move_player(dx, dy): 
-    """
-    moves player to a new position
-    """
-    x, y = find_player()
+def move(dx, dy):
+    x, y = find_player()    # where is plyer
+    target = get_obj(dx, dy)   # what is on target
     
-    level_data[get_pos(x, y)] = [x, y, " "]
-    level_data[get_pos(dx, dy)] = [dx, dy, "@"]
-
+    if floor == target:
+        player = player_normal
+        level_data[get_pos(x, y)] = [x, y, " "]
+        level_data[get_pos(dx, dy)] = [dx, dy, player]
+    if crate == target: 
+        False 
+    if storage == target: 
+        player = player_on_storage
+        level_data[get_pos(x, y)] = [x, y, " "]
+        level_data[get_pos(dx, dy)] = [dx, dy, player]
+        
 def find_player():
     """
     returns the x, y position of player
     """
     for pos, data in enumerate(level_data):
-        if data[2] == player:
+        if str(data[2]) == str(player):
             return data[0], data[1]
 
 def get_pos(x, y): 
@@ -114,14 +144,13 @@ def get_pos(x, y):
         if data[0] == x and data[1] == y: 
             return pos
         
-
 def get_obj(x, y): 
     for pos, data in enumerate(level_data): 
         if data[0] == x and data[1] == y:
             return data[2]
 #
 #
-# main and main loop functions 
+# main, exit and main loop functions 
 #
 #
 def sokoban_display():
@@ -129,24 +158,31 @@ def sokoban_display():
     dsiplay the levelmap and wait for a input from user, this is the main game loop 
     """
     while level_complete == False:
-        print(get_map())
-        key = input_move()
-        x, y = find_player()
-        if key == 'q':
-            False
-            break
-        if key == key_up and can_move(x, y - 1):
-            move_player(x, y - 1) 
-        if key == key_down and can_move(x, y + 1):
-            move_player(x, y + 1)   
-        if key == key_left and can_move(x - 1, y): 
-            move_player(x - 1, y)   
-        if key == key_right and can_move(x + 1 , y): 
-            move_player(x + 1, y)  
+        for key in cmd():
+            print(get_map())
+            x, y = find_player()
+            if key == 'q':
+                exit()
+            if key == key_up and can_move(x, y - 1):
+                move(x, y - 1) 
+            if key == key_down and can_move(x, y + 1):
+                move(x, y + 1)   
+            if key == key_left and can_move(x - 1, y): 
+                move(x - 1, y)   
+            if key == key_right and can_move(x + 1 , y): 
+                move(x + 1, y)  
+            if key == '?': 
+                print(cli_help)
+
+def exit():
+    print("Bye bye")
+    sys.exit() # clean kill of application
 
 def main():
     sokoban_levels()                        # loads leveles into list
     sokoban_load(levels[current_level])     # loads current level into level_data
-    sokoban_display()                       # go into main game loop
+    print(get_map())                        # draw map for first time.
+    sokoban_display()                       # go into main game loop    
+    
 if __name__ == '__main__':
     main()
