@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import time
 
 # -- declarations ----------------------------------------------------- 
 level_map = []
@@ -12,7 +13,7 @@ key_left = 'a'
 key_right = 's'
 player_normal='@'
 floor=' '
-crate='o'
+normal_crate='o'
 storage='.'
 player_on_storage='+'
 crate_on_storage='*'
@@ -40,7 +41,7 @@ def sokoban_load(filename, row=[]):
 def sokoban_render_map(level_map=[], dx=0, dy=0):
     """ read the level_data and append floor to empty structures """
     clear_screen()
-    print(level_map)
+    # -- debug print(level_map)
     for y in level_map:
         for x in y:
             while x[0] > dx:
@@ -61,19 +62,33 @@ def sokoban_game(level=0, moves=0, level_complete=False):
     sokoban_render_map(level_map)
     while level_complete == False:
         for key in sokoban_cmd():
+            
             x, y, player = find_player()
-            if key == key_up and player_moveable(x, y - 1): 
-                move_player(x, y - 1)    
-            if key == key_down and player_moveable(x, y + 1):
+            
+            if key == key_up and player_moveable(x, y, x, y - 1): 
+                move_player(x, y - 1)
+                if get_map_object(x, y - 1) == normal_crate:
+                    move_crate(x, y - 1, x , y - 2)
+
+            if key == key_down and player_moveable(x, y, x, y + 1):
                 move_player(x, y + 1) 
-            if key == key_left and player_moveable(x - 1, y):
+                if get_map_object(x, y + 1) == normal_crate:
+                    move_crate(x, y + 1, x, y + 2)
+            
+            if key == key_left and player_moveable(x, y, x - 1, y):
                 move_player(x - 1, y) 
-            if key == key_right and player_moveable(x + 1, y):
-                move_player(x + 1, y) 
+                if get_map_object(x-1, y) == normal_crate:
+                    move_crate(x - 1, y, x - 2, y)
+
+            if key == key_right and player_moveable(x, y, x + 1, y):
+                move_player(x + 1, y)
+                if get_map_object(x+1, y) == normal_crate:
+                    move_crate(x + 1, y, x + 2, y)
+
             if key == 'q':
                 exit()
+            
             sokoban_render_map(level_map)
-        # kontrollera om level är klar
 
 def find_player(x=0, y=0):
     """ locate the player on the board, returns x, y and current player sprite """
@@ -85,36 +100,103 @@ def find_player(x=0, y=0):
                 player = item[1]
     return [x, y, player]
 
-def player_moveable(dx, dy):
-    """ is the target a wall """
-    x, y, player = find_player()
-    moveable = False 
-    return True
-    try:
-        if level_map[dy][dx][1] != wall:
-            return True   
-        elif level_map[dy][dx][1] == wall: 
+def player_moveable(x, y, dx, dy):
+    """ can user move to a new location ? """
+    xx, yy = crate_destination(x, y, dx, dy)
+    for item in level_map[dy]:
+        if item[1] == wall and item[0] == dx:
             return False 
-    except: 
-        return True
+        if item[1] == normal_crate and item[0] == dx:
+            return crate_moveable(xx,yy)
+    return True
 
 def move_player(dx, dy):
     """ moves a player to a new position and deletes the old """
     x, y, player = find_player()
-    level_map[dy].remove([x, player]) 
+    destroy_map_object(x, y, player)
+
+    if player == player_on_storage: 
+        create_map_object(x, y, storage)
+        if get_map_object(dx, dy) == floor:
+            player = player_normal
+        if get_map_object(dx, dy) == storage:
+            destroy_map_object(dx, dy, storage)
+
+    elif player == player_normal:
+        if get_map_object(dx, dy) == storage:
+            player = player_on_storage
+            destroy_map_object(dx, dy, storage)
+
+    create_map_object(dx, dy, player)
+
+def crate_moveable(dx, dy): 
+    """ can crate move to a new location ? """ 
+    for item in level_map[dy]:
+        if item[1] == wall and item[0] == dx: 
+            return False 
+        if item[1] == storage and item[0] == dx:
+            return True
+        if item[1] == floor and item[0] == dx:
+            return True
+    return True
+
+def move_crate(x, y, dx, dy):
+    """ move a crate to a new position """ 
+    crate = get_map_object(x,y)
+    destroy_map_object(x,y)
+    if crate == crate_on_storage:
+        destroy_map_object(x,y)
+    if get_map_object(dx, dy) == storage:
+        destroy_map_object(dx,dy)
+        pass
+    else: 
+        crate = normal_crate
+    create_map_object(dx, dy, crate)
+
+def crate_destination(x, y, dx, dy): 
+    """ where is the player moving """
+    xx = x - dx 
+    yy = y - dy
+    if xx == -1:
+        xx = -2
+    if xx == +1:
+        xx = +2 
+    if yy == -1:
+        yy = -2
+    if yy == +1: 
+        yy = +2
+    return xx, yy
+
+def get_map_object(dx,dy): 
+    for item in level_map[dy]:
+        if item[0] == dx:
+            return item[1]
+    return floor
+
+def create_map_object(dx, dy, obj): 
+    """ create a object in level_map """ 
     for item in level_map[dy]:
         if item[0] > dx:
-            level_map[dy].insert(level_map[dy].index(item), [dx, player])
+            level_map[dy].insert(level_map[dy].index(item), [dx, obj]) #kommer kanske att dö om vi är på 0?
             break
-        
+
+def destroy_map_object(x, y, obj=''):
+    if obj == '':
+        obj = get_map_object(x, y)
+    level_map[y].remove([x, obj])
+
+def d(text): 
+    print(text)
+    time.sleep(3)
+
 def clear_screen():
     """ clear the screen """
     os.system("clear")
-    return
+    return 
 
 def exit():
     """ exits the game """
-    sys.exit() # clean kill of application
+    sys.exit() # clean k ill of application
 
 def main():
     sokoban_levels()                        # loads leveles into list
