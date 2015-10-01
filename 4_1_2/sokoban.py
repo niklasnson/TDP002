@@ -103,11 +103,14 @@ def find_player(x=0, y=0):
 def player_moveable(x, y, dx, dy):
     """ can user move to a new location ? """
     xx, yy = crate_destination(x, y, dx, dy)
-    for item in level_map[dy]:
-        if item[1] == wall and item[0] == dx:
-            return False 
-        if item[1] == normal_crate and item[0] == dx:
-            return crate_moveable(xx,yy)
+    map_object = get_map_object(dx, dy)
+    
+    if map_object == wall:
+        return False
+
+    if map_object == normal_crate and crate_moveable(xx,yy) == False: 
+        return False
+    
     return True
 
 def move_player(dx, dy):
@@ -131,14 +134,12 @@ def move_player(dx, dy):
 
 def crate_moveable(dx, dy): 
     """ can crate move to a new location ? """ 
-    for item in level_map[dy]:
-        if item[1] == wall and item[0] == dx: 
-            return False 
-        if item[1] == storage and item[0] == dx:
-            return True
-        if item[1] == floor and item[0] == dx:
-            return True
-    return True
+    map_object = get_map_object(dx, dy) 
+    if map_object == floor: 
+        return True
+    if map_object == storage: 
+        return True
+    return False
 
 def move_crate(x, y, dx, dy):
     """ move a crate to a new position """ 
@@ -148,37 +149,41 @@ def move_crate(x, y, dx, dy):
         destroy_map_object(x,y)
     if get_map_object(dx, dy) == storage:
         destroy_map_object(dx,dy)
-        pass
     else: 
         crate = normal_crate
     create_map_object(dx, dy, crate)
 
 def crate_destination(x, y, dx, dy): 
     """ where is the player moving """
-    xx = x - dx 
-    yy = y - dy
-    if xx == -1:
-        xx = -2
-    if xx == +1:
-        xx = +2 
-    if yy == -1:
-        yy = -2
-    if yy == +1: 
-        yy = +2
-    return xx, yy
+
+    if x == dx: 
+        xx = dx
+        if y > dy: 
+            yy = dy - 1
+        else:
+            yy = dy + 1
+
+    if y == dy: 
+        yy = dy
+        if x > dx:
+            xx = dx - 1
+        else: 
+            xx = dx + 1
+    
+    return xx, yy 
 
 def get_map_object(dx,dy): 
     for item in level_map[dy]:
         if item[0] == dx:
             return item[1]
-    return floor
+    return floor 
 
 def create_map_object(dx, dy, obj): 
     """ create a object in level_map """ 
     for item in level_map[dy]:
         if item[0] > dx:
             level_map[dy].insert(level_map[dy].index(item), [dx, obj]) #kommer kanske att dö om vi är på 0?
-            break
+            break 
 
 def destroy_map_object(x, y, obj=''):
     if obj == '':
