@@ -1,4 +1,5 @@
 import random
+import time
 
 class bcolors:
     HEADER = '\033[95m'
@@ -32,8 +33,10 @@ def mongo_sort(sorted_list, unsorted_list):
         return False
 
 def main():
-    unsorted_list = ['python','c','ada','ruby','pascal','basic']
-    initalize_sort(unsorted_list)
+    while True:
+        unsorted_list = ['python','c','ada','ruby','pascal','basic']
+        initalize_sort(unsorted_list)
+        time.sleep(2)
 
 if __name__ == '__main__':
     main()
