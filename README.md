@@ -1,4 +1,3 @@
-# python-class
+# TDP 002
 
-mina lösningar till labbar och egna projekt som är relaterade till TDP002 kursen
-vid LiU. 
+My attemts and solves for the TDP002 Python course at LiU. 
