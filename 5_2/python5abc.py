@@ -3,7 +3,7 @@
 plus = lambda x, y: x + y
 times = lambda x, y: x * y
 
-from functools import reduce   # enda vettiga funktionen jag hittar för att köra i terminalen. men är inte aktuell i python 3.5 
+from functools import reduce    
 
 """-----------------------------------------------------------------------------------------------------------------"""
 
@@ -16,20 +16,20 @@ db = [
 
 def dbsearch(db, column, value):
     """ search in db on column key and the value """
-    return [item for item in db if item[column] == value]
+    return [item for item in db if item[column] == value] # list comprehenson, retunerar en lista
     
 """-----------------------------------------------------------------------------------------------------------------"""
 
 def contains(search, sentence):
     """ returns true/false if search is in sentence """
-    return bool([word for word in sentence if search == word])
+    return bool([word for word in sentence if search == word])  # retunerar true or false, ur en lista
 
 """-----------------------------------------------------------------------------------------------------------------"""
 
 
 def main(): 
-    print(reduce(plus, range(1, 259)))
-    print(reduce(times, range(1, 259)))
+    print(reduce(plus, range(1, 259)))   # reduce tar en funktion och en sekvens som invärde och retunerar ett ensamt värde
+    print(reduce(times, range(1, 259)))  # reduce tar en funnktion och en sekvens som invärde och retunerar ett ensamt värde
     # ---------------------------------------------------------------------------------------------------------------
     print(dbsearch(db, 'position', 'examiner'))
     # ---------------------------------------------------------------------------------------------------------------

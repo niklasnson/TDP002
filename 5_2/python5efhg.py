@@ -6,9 +6,8 @@ def generate_list(operator, amount):
 """-----------------------------------------------------------------------------------------------------------------"""
 
 def partial(operator, amount):
-    return lambda x: operator(amount, x)
     """ Skriv en funktion partial som tar en annan funktion och ett värde som indata. Partial ska returnera en ny funktion som gör samma sak som den angivna funktionen men där första argumentet till den angivna funktionen är bundet till det värde som angavs som andra argument till partial. """
-
+    return lambda x: operator(amount, x)
 """-----------------------------------------------------------------------------------------------------------------"""
 
 def compose(first_operator, second_operator):

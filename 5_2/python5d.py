@@ -28,7 +28,7 @@ def cat(args):
             for line in file: 
                 print(line, end='')
     except: 
-        print('error - file not found ?')
+        print('error: file not found :', filename)
         
 def exit():
     print("exit()")
